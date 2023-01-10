@@ -12,6 +12,7 @@ import { CreatePerson } from "../create-person/create-person";
 import { EditPerson } from "../edit-person/edit-person";
 import { Toast } from "../toast/toast";
 import { showToast } from "../toast/toast-slice";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 export const PeopleList = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -53,7 +54,7 @@ export const PeopleList = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <ProgressSpinner />;
   }
 
   return (
