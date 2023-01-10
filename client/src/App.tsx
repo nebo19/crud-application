@@ -1,12 +1,10 @@
 import { useEffect } from "react";
 import { PeopleList } from "./components/people-list/people-list";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { CreatePerson } from "./components/create-person/create-person";
 import { useAppDispatch } from "./hooks";
 import {
   fetchPeopleStart,
   fetchPeopleSuccess,
-  fetchPeopleError,
 } from "./components/people-list/people-list-slice";
 import axios from "axios";
 
@@ -23,7 +21,7 @@ const App = () => {
             dispatch(fetchPeopleSuccess(response.data.people))
           );
       } catch (error) {
-        dispatch(fetchPeopleError(error));
+        console.log(error);
       }
     })();
   }, [dispatch]);
@@ -31,7 +29,6 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/new-user" element={<CreatePerson />} />
         <Route path="/" element={<PeopleList />} />
       </Routes>
     </BrowserRouter>

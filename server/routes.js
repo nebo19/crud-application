@@ -44,28 +44,6 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/:id", (req, res) => {
-  Person.findById(req.params.id)
-    .then((person) => {
-      if (person) {
-        res.status(200).json({
-          message: "Person fetched successfully",
-          person: person,
-        });
-      } else {
-        res.status(404).json({
-          message: "Person not found",
-        });
-      }
-    })
-    .catch((error) => {
-      res.status(500).json({
-        message: "Fetching person failed",
-        error: error,
-      });
-    });
-});
-
 router.patch("/:id", (req, res) => {
   const update = {};
   for (const prop of Object.keys(req.body)) {

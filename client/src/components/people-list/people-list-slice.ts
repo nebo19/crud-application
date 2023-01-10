@@ -9,19 +9,16 @@ export interface PersonType {
   city?: string;
   address?: string;
   phone?: string;
-  editMode?: boolean;
 }
 
 export interface StateType {
   peopleListData: PersonType[];
   loading: boolean;
-  error: any;
 }
 
 const initialState: StateType = {
   peopleListData: [],
   loading: false,
-  error: null,
 };
 
 const peopleSlice = createSlice({
@@ -34,14 +31,14 @@ const peopleSlice = createSlice({
     fetchPeopleSuccess(state, action) {
       state.peopleListData = action.payload;
       state.loading = false;
-      state.error = null;
-    },
-    fetchPeopleError(state, action) {
-      state.loading = false;
-      state.error = action.payload;
     },
     addPerson(state, action) {
       state.peopleListData = [...state.peopleListData, action.payload];
+    },
+    editPerson(state, action) {
+      state.peopleListData = state.peopleListData.map((person) =>
+        person.id === action.payload.id ? action.payload : person
+      );
     },
     deletePerson(state, action) {
       state.peopleListData = state.peopleListData.filter(
@@ -54,9 +51,9 @@ const peopleSlice = createSlice({
 export const {
   fetchPeopleStart,
   fetchPeopleSuccess,
-  fetchPeopleError,
   deletePerson,
   addPerson,
+  editPerson,
 } = peopleSlice.actions;
 
 export default peopleSlice.reducer;

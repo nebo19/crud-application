@@ -5,9 +5,13 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dialog } from "primereact/dialog";
 import { Button } from "../button/button";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, createSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import "./people-list.scss";
+import { CreatePerson } from "../create-person/create-person";
+import { EditPerson } from "../edit-person/edit-person";
+import { Toast } from "../toast/toast";
+import { showToast } from "../toast/toast-slice";
 
 export const PeopleList = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -17,6 +21,8 @@ export const PeopleList = () => {
     ({ people }: { people: StateType }) => people
   );
   const userToDeleteId = useRef(null);
+  const [isCreatePersonDialogOpen, setIsCreatePersonDialogOpen] =
+    useState(false);
 
   const handlePersonDelete = (id: number | null) => {
     if (!id) {
@@ -27,8 +33,23 @@ export const PeopleList = () => {
       .delete(`http://localhost:3001/people/${id}`)
       .then(() => {
         dispatch(deletePerson(id));
+        dispatch(
+          showToast({
+            summary: "Success!",
+            content: "You successfully deleted person!",
+            severity: "success",
+          })
+        );
       })
-      .catch(() => console.log("err"));
+      .catch(() =>
+        dispatch(
+          showToast({
+            summary: "Error!",
+            content: "Error occured. Please try again.",
+            severity: "error",
+          })
+        )
+      );
   };
 
   if (loading) {
@@ -42,7 +63,15 @@ export const PeopleList = () => {
         emptyMessage={
           <>
             There are no persons to show.{" "}
-            <Link to="/new-user">Create one?</Link>
+            <Link
+              to=""
+              onClick={(e) => {
+                e.preventDefault();
+                setIsCreatePersonDialogOpen(true);
+              }}
+            >
+              Create one?
+            </Link>
           </>
         }
       >
@@ -61,13 +90,22 @@ export const PeopleList = () => {
         <Column field="phone" header="Phone" />
         <Column
           header={
-            <Button onClick={() => navigate("/new-user")}>
+            <Button onClick={() => setIsCreatePersonDialogOpen(true)}>
               <i className="pi pi-user-plus" />
             </Button>
           }
-          body={({ _id }) => (
+          body={({ _id, id }) => (
             <div className="action-buttons--wrapper">
-              <Button>
+              <Button
+                onClick={() =>
+                  navigate({
+                    pathname: "/",
+                    search: createSearchParams({
+                      id,
+                    }).toString(),
+                  })
+                }
+              >
                 <i className="pi pi-user-edit" />
               </Button>
               <Button
@@ -115,6 +153,12 @@ export const PeopleList = () => {
         }
         ?
       </Dialog>
+      <CreatePerson
+        isDialogOpen={isCreatePersonDialogOpen}
+        setIsDialogOpen={setIsCreatePersonDialogOpen}
+      />
+      <EditPerson />
+      <Toast />
     </>
   );
 };
